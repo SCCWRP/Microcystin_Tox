@@ -1,0 +1,366 @@
+---
+title: "Criterion Continuous Concentration (CCC) Derivation for Microcystin-LR"
+subtitle: "EPA (1985) Guidelines methodology, worked example"
+author: "SCCWRP"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
+    df-print: kable
+  docx:
+    toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+## Overview
+
+This document reproduces, in R, the Criterion Continuous Concentration (CCC)
+derivation performed for the microcystin-LR toxicity dataset
+(`ToxSummary.csv`), following the general approach in the US EPA (1985)
+*Guidelines for Deriving Numerical National Water Quality Criteria for the
+Protection of Aquatic Organisms and Their Uses* (Stephan et al. 1985).
+
+Four scoping decisions drive every calculation below, applied in this
+order:
+
+1. **Endpoint filter (applied first, all data):** only rows where
+   `endpoint` is one of *Growth, Development, Reproduction, Mortality,* or
+   *Growth + Development* are retained — i.e., whole-organism/apical
+   endpoints. Behavior, Histology, and Subcellular (gene/protein) endpoints
+   are excluded.
+2. **Species scope:** only rows flagged `ca_relevant == "Yes"` are used.
+3. **Censored values:** any test reporting only a NOEC (no LOEC) or only a
+   LOEC (no NOEC) is excluded, since the standard EPA Chronic/Acute Value
+   requires both bounds.
+4. **Acute side further restricted to Mortality (Step 5):** on top of the
+   Step 1 endpoint filter, the Acute Value calculation uses only rows with
+   `endpoint == "Mortality"`, consistent with EPA guidance that Final
+   Acute Values be based on severe/lethal-type endpoints rather than
+   sublethal ones. The chronic side is unaffected and still uses all four
+   endpoints (Growth, Development, Reproduction, Mortality) from Step 1.
+
+::: {.callout-important}
+## Headline conclusion: this dataset does not support an EPA-guideline-compliant CCC
+
+EPA's guidelines require toxicity data spanning a minimum of **8 taxonomic
+categories** (salmonid, a second/warmwater fish family, a third chordate,
+planktonic crustacean, benthic crustacean, insect, a non-arthropod/
+non-chordate phylum, and one more family) before either a Final Chronic
+Value (direct method) or a Final Acute Value (used in the FAV/FACR
+fallback method) can be treated as validly calculated.
+
+With the filters above applied, the **chronic** subset covers only 2 genera
+/ 2 categories, and the **acute** subset covers only 6 genera / 3
+categories. **Neither the direct method nor the FAV/FACR fallback clears
+EPA's minimum data bar with this data.** The fallback method only rescues
+the calculation if the acute data are *more* taxonomically complete than
+the chronic data — here, they aren't complete either.
+
+The CCC calculated below (≈0.0277 µg/L) should therefore be read strictly
+as **a worked demonstration of the calculation mechanics**, not a
+defensible criterion. It is also highly sensitive to scope: an earlier
+version of this same calculation with a broader apical-endpoint filter
+(Growth/Development/Reproduction/Mortality on both acute and chronic sides)
+produced CCC ≈ 0.0235 µg/L, and an even earlier version with no endpoint
+filter at all produced CCC ≈ 1.34 µg/L — nearly a 60-fold range across the
+three versions, driven entirely by which endpoints were allowed in. That
+sensitivity is itself a symptom of too little independent data to average
+out any one study's influence.
+
+Additionally, the exact Final Acute Value formula was reconstructed from
+established technical literature/prior knowledge rather than freshly
+re-verified against a primary source in this session — see the note below
+Step 5.
+:::
+
+## Setup
+
+No external packages are required — everything here uses base R so the
+script runs anywhere R is installed.
+
+```{r setup}
+geomean <- function(x) exp(mean(log(x)))
+
+parse_genus <- function(species_col) {
+  m <- regmatches(species_col, regexpr("\\(([^)]+)\\)", species_col))
+  binom <- trimws(gsub("[()]", "", m))
+  genus <- sapply(strsplit(binom, "\\s+"), `[`, 1)
+  data.frame(binomial = binom, genus = genus, stringsAsFactors = FALSE)
+}
+
+KEEP_ENDPOINTS <- c("Growth", "Development", "Reproduction", "Mortality",
+                    "Growth + Development")
+```
+
+## Step 1 — Load data and parse genus
+
+```{r load-data}
+df <- read.csv("Data/ToxSummary.csv", stringsAsFactors = FALSE)
+df$noec_ug_l <- as.numeric(df$noec_ug_l)
+df$loec_ug_l <- as.numeric(df$loec_ug_l)
+
+parsed <- parse_genus(df$Species)
+df$binomial <- parsed$binomial
+df$genus    <- parsed$genus
+
+nrow(df)
+table(df$endpoint)
+```
+
+## Step 2 — Apply the endpoint filter (upfront, before any other filter)
+
+```{r endpoint-filter}
+df_ep <- df[df$endpoint %in% KEEP_ENDPOINTS, ]
+cat("Rows before endpoint filter:", nrow(df), "\n")
+cat("Rows after endpoint filter: ", nrow(df_ep), "\n")
+table(df_ep$endpoint)
+```
+
+## Step 3 — Apply the scoping filter (`ca_relevant == "Yes"`)
+
+```{r scope-filter}
+ca <- df_ep[trimws(tolower(df_ep$ca_relevant)) == "yes", ]
+nrow(ca)
+```
+
+## Step 4 — Chronic side: Chronic Value, SMCV, GMCV
+
+```{r chronic-chv}
+chronic_all    <- ca[trimws(tolower(ca$chronic_acute)) == "chronic", ]
+chronic_usable <- chronic_all[!is.na(chronic_all$noec_ug_l) &
+                                 !is.na(chronic_all$loec_ug_l), ]
+chronic_excluded <- chronic_all[is.na(chronic_all$noec_ug_l) |
+                                   is.na(chronic_all$loec_ug_l), ]
+
+chronic_usable$ChV <- sqrt(chronic_usable$noec_ug_l * chronic_usable$loec_ug_l)
+
+cat("Chronic rows after endpoint+ca_relevant filters:", nrow(chronic_all), "\n")
+cat("Usable (both NOEC & LOEC present):", nrow(chronic_usable), "\n")
+cat("Excluded (censored, one bound missing):", nrow(chronic_excluded), "\n")
+
+chronic_usable[, c("Species", "reference", "endpoint",
+                    "noec_ug_l", "loec_ug_l", "ChV")]
+```
+
+**Species Mean Chronic Value (SMCV)** = geometric mean of ChV within a species.
+**Genus Mean Chronic Value (GMCV)** = geometric mean of SMCV within a genus.
+
+```{r chronic-smcv-gmcv}
+smcv <- aggregate(ChV ~ binomial + genus, data = chronic_usable, FUN = geomean)
+names(smcv)[names(smcv) == "ChV"] <- "SMCV"
+
+n_tests <- aggregate(ChV ~ binomial, data = chronic_usable, FUN = length)
+names(n_tests)[2] <- "n_tests"
+smcv <- merge(smcv, n_tests, by = "binomial")
+
+gmcv <- aggregate(SMCV ~ genus, data = smcv, FUN = geomean)
+names(gmcv)[names(gmcv) == "SMCV"] <- "GMCV"
+gmcv <- gmcv[order(gmcv$GMCV), ]
+
+smcv
+gmcv
+```
+
+### Minimum data requirement check (chronic)
+
+EPA requires chronic data for a minimum of 8 families spanning specific
+taxonomic categories before a Final Chronic Value can be calculated
+directly.
+
+```{r chronic-groups}
+unique(chronic_usable[, c("genus", "group")])
+```
+
+Only `r nrow(gmcv)` genera / `r length(unique(chronic_usable$group))`
+taxonomic categories are represented — well short of the 8-family minimum.
+**A direct Final Chronic Value cannot be validly calculated from this
+subset**, so the script proceeds with EPA's FAV/FACR fallback method (with
+the caveat, confirmed in Step 6 below, that the acute side doesn't clear
+the bar either).
+
+## Step 5 — Acute side: Acute Value, SMAV, GMAV
+
+```{r acute-av}
+acute_all <- ca[trimws(tolower(ca$chronic_acute)) == "acute", ]
+
+# Acute side is further restricted to the Mortality endpoint only (on top
+# of the Step 2 endpoint filter). Both conditions must be combined into a
+# single row-index expression with `&`/`|` -- putting a condition in the
+# *column* position (df[rows, cols]) silently does the wrong thing instead
+# of throwing an error, so it's an easy mistake to make.
+acute_usable <- acute_all[!is.na(acute_all$noec_ug_l) &
+                             !is.na(acute_all$loec_ug_l) &
+                             acute_all$endpoint == "Mortality", ]
+acute_excluded <- acute_all[is.na(acute_all$noec_ug_l) |
+                               is.na(acute_all$loec_ug_l) |
+                               acute_all$endpoint != "Mortality", ]
+
+# Surrogate Acute Value = geometric mean of NOEC & LOEC (a true LC50/EC50
+# was not consistently reported in this dataset; flagged as a deviation
+# from strict EPA practice in the report).
+acute_usable$AV <- sqrt(acute_usable$noec_ug_l * acute_usable$loec_ug_l)
+
+cat("Acute rows after endpoint+ca_relevant filters:", nrow(acute_all), "\n")
+cat("Usable (Mortality endpoint, both NOEC & LOEC present):", nrow(acute_usable), "\n")
+cat("Excluded (non-Mortality endpoint, or censored):", nrow(acute_excluded), "\n")
+```
+
+```{r acute-smav-gmav}
+smav <- aggregate(AV ~ binomial + genus, data = acute_usable, FUN = geomean)
+names(smav)[names(smav) == "AV"] <- "SMAV"
+
+gmav <- aggregate(SMAV ~ genus, data = smav, FUN = geomean)
+names(gmav)[names(gmav) == "SMAV"] <- "GMAV"
+gmav <- gmav[order(gmav$GMAV), ]
+
+N_acute <- nrow(gmav)
+gmav$R      <- seq_len(N_acute)
+gmav$P      <- gmav$R / (N_acute + 1)
+gmav$lnGMAV <- log(gmav$GMAV)
+gmav$sqrtP  <- sqrt(gmav$P)
+
+smav
+gmav
+```
+
+### Minimum data requirement check (acute)
+
+```{r acute-groups}
+unique(acute_usable[, c("genus", "group")])
+```
+
+Only `r N_acute` genera / `r length(unique(acute_usable$group))` taxonomic
+categories are represented on the acute side too — also short of the
+8-family minimum (missing, at least, a salmonid, a second fish family, and
+a benthic crustacean). **This means the FAV/FACR fallback does not actually
+rescue this derivation** from EPA's data-sufficiency requirement — it is
+undermined by the same kind of taxonomic gap as the direct chronic method.
+
+## Step 6 — Final Acute Value (FAV)
+
+EPA's method: rank the Genus Mean Acute Values (GMAVs) ascending, assign
+cumulative probability $P = R/(N+1)$, take the four lowest GMAVs, and fit a
+log-triangular extrapolation to the 5th percentile ($P = 0.05$):
+
+$$
+S^2 = \frac{\sum(\ln \text{GMAV})^2 - \frac{(\sum \ln \text{GMAV})^2}{4}}
+           {\sum P - \frac{(\sum \sqrt P)^2}{4}}
+\qquad
+S = \sqrt{S^2}
+\qquad
+L = \frac{\sum \ln(\text{GMAV}) - S \sum \sqrt P}{4}
+\qquad
+\text{FAV} = e^{\,S\sqrt{0.05} + L}
+$$
+
+```{r fav-calc}
+four <- head(gmav, 4)
+four
+
+sum_lnGMAV  <- sum(four$lnGMAV)
+sum_lnGMAV2 <- sum(four$lnGMAV^2)
+sum_P       <- sum(four$P)
+sum_sqrtP   <- sum(four$sqrtP)
+
+S2  <- (sum_lnGMAV2 - (sum_lnGMAV^2) / 4) / (sum_P - (sum_sqrtP^2) / 4)
+S   <- sqrt(S2)
+L   <- (sum_lnGMAV - S * sum_sqrtP) / 4
+A   <- S * sqrt(0.05) + L
+FAV <- exp(A)
+
+data.frame(quantity = c("N genera", "sum(lnGMAV)", "sum(lnGMAV^2)",
+                         "sum(P)", "sum(sqrtP)", "S^2", "S", "L",
+                         "A = S*sqrt(0.05)+L", "FAV"),
+           value = c(N_acute, sum_lnGMAV, sum_lnGMAV2, sum_P, sum_sqrtP,
+                     S2, S, L, A, FAV))
+```
+
+**Sanity check:** a valid 5th-percentile extrapolation should fall at or
+below the single lowest GMAV in the dataset.
+
+```{r fav-sanity-check}
+FAV < min(gmav$GMAV)
+```
+
+**Formula verification note:** this formula was reconstructed from
+established technical literature/prior knowledge; live retrieval of the
+primary EPA 1985 Guidelines PDF in the session that produced this analysis
+returned inconsistent, garbled formula text (a PDF text-extraction
+artifact), so the exact algebra above was not freshly re-verified against
+the primary source. The sanity check above passes, but please check
+against Stephan et al. (1985), Appendix I, before relying on this number.
+
+## Step 7 — Acute-Chronic Ratio (ACR) and Final ACR (FACR)
+
+```{r acr-facr}
+acr <- merge(smav[, c("binomial", "genus", "SMAV")],
+             smcv[, c("binomial", "SMCV")], by = "binomial")
+acr$ACR <- acr$SMAV / acr$SMCV
+acr
+
+FACR <- geomean(acr$ACR)
+FACR
+```
+
+Only `r nrow(acr)` species have both an acute and chronic value in this
+filtered dataset, so FACR is a single-species ratio here — a thin basis by
+EPA standards, which call for a minimum of three species.
+
+## Step 8 — Final result: CCC
+
+```{r ccc}
+CCC <- FAV / FACR
+
+data.frame(quantity = c("FAV (ug/L)", "FACR (unitless)", "CCC = FAV/FACR (ug/L)"),
+           value = c(FAV, FACR, CCC))
+```
+
+```{r ccc-inline}
+#| echo: false
+cat(sprintf("CCC = %.4f ug/L microcystin-LR (illustrative only -- see headline conclusion above)\n", CCC))
+```
+
+## Limitations
+
+- **Neither dataset meets EPA's 8-family minimum data requirement** — the
+  chronic subset has `r nrow(gmcv)` genera / categories, the acute subset
+  has `r N_acute` genera / `r length(unique(acute_usable$group))`
+  categories. This means the FAV/FACR fallback does not actually resolve
+  the data-sufficiency problem; it only relocates it.
+- **FACR is based on a single species** (*Daphnia magna*). Restricting to
+  apical endpoints flipped its ACR from an atypical value below 1 (in an
+  earlier, non-endpoint-filtered version of this analysis) to a more
+  typical value above 1 here — a useful illustration of how much a
+  single-species ratio can swing with small scoping changes.
+- **Acute Values are NOEC/LOEC-based surrogates**, not true LC50/EC50s,
+  since the latter weren't consistently reported in this dataset.
+- **The FAV formula was not independently re-verified against a freshly
+  retrieved primary source** in the session that produced this script (see
+  Step 6).
+- Excluding all censored (single-bound) rows is conservative for
+  transparency but discards real information.
+- **The result is highly scope-sensitive**: this version (acute restricted
+  to Mortality only) gives CCC ≈ 0.0277 µg/L; a prior version (acute using
+  all four apical endpoints) gave CCC ≈ 0.0235 µg/L; and the earliest
+  version with no endpoint filter at all gave CCC ≈ 1.34 µg/L — nearly a
+  60-fold range across three reasonable-sounding scoping choices. Treat
+  all of these as bracketing examples of method mechanics on thin data,
+  not as converging estimates of a true value.
+
+## Reproducing this with different assumptions
+
+To explore sensitivity to the scoping choices made above, edit:
+
+- `KEEP_ENDPOINTS` in **Setup** (e.g., add back Histology or Subcellular
+  endpoints).
+- The `ca_relevant` filter in **Step 3** (e.g., drop the filter entirely,
+  or switch to `ca_native`/`ca_resident`).
+- The censoring rule in **Steps 4 and 5** (e.g., keep NOEC-only rows and
+  use NOEC itself as `ChV`/`AV` instead of dropping them).
+- The `endpoint == "Mortality"` restriction in **Step 5** (e.g., broaden
+  back to all four apical endpoints for the acute side, matching the
+  chronic side).

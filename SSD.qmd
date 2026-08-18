@@ -1,0 +1,228 @@
+---
+title: "Microcystin Toxicity"
+format: html
+---
+
+# Setup
+```{r}
+#| label: packages
+library(tidyverse)
+library(ssdtools)
+library(ggplot2)
+
+```
+
+```{r}
+#import
+tox_dat <- read.csv(file = "Data/ToxSummary.csv")
+
+
+#tidy
+tox_dat_tidy <- tox_dat %>%
+  #convert loec to noec by dividing by 2 if there is no noec, otherwise use noec
+  mutate(noec_ssd = case_when(
+    !is.na(noec_ug_l) ~ noec_ug_l,
+    is.na(noec_ug_l) & !is.na(loec_ug_l) ~ loec_ug_l/2
+  )) %>%
+  #if acute exposure duration, divide the noec by 10, otherwise leave it along
+  mutate(noec_ssd = if_else(chronic_acute == "acute", noec_ssd/10, noec_ssd)) %>%
+  #include only higher level endpoints
+  filter(endpoint %in% c("Growth", "Development", "Reproduction", "Mortality", "Growth + Development")) %>%
+  #mark invasive species
+  mutate(Species = if_else(note == "Invasive", paste0(Species, "*"), Species))
+
+```
+
+```{r}
+#kitchen sink
+fit_dat <- tox_dat_tidy %>%
+    filter(!is.na(noec_ssd)) %>%
+    group_by(Species) %>%
+    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    ungroup() %>%
+    group_by(Species, Conc, group) %>%
+    summarise()    
+
+ssd_fits <- ssd_fit_dists(fit_dat)
+
+ssd_pred <- predict(ssd_fits, ci = TRUE)
+
+ssd_plot(fit_dat, ssd_pred,
+  label = "Species",
+  color = "group",
+  xlab = "Concentration (µg/L)",
+  ribbon = TRUE,
+  label_size = 4,
+) +
+  expand_limits(x = 3000) +
+  scale_color_viridis_d() +
+  labs(title = "All Species", color = "Taxonomic Group") +
+  theme(text = element_text(size = 16))
+```
+
+```{r}
+#cali relevant
+fit_dat <- tox_dat_tidy %>%
+    filter(
+      ca_relevant == "Yes",
+      !is.na(noec_ssd)) %>%
+    group_by(Species) %>%
+    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    ungroup() %>%
+    group_by(Species, Conc, group) %>%
+    summarise()    
+
+ssd_fits <- ssd_fit_dists(fit_dat)
+
+ssd_pred <- predict(ssd_fits, ci = TRUE)
+
+ssd_plot(fit_dat, ssd_pred,
+  label = "Species",
+  color = "group",
+  xlab = "Concentration (µg/L)",
+  ribbon = TRUE,
+  label_size = 4,
+) +
+  expand_limits(x = 3000) +
+  scale_color_viridis_d() +
+  labs(color = "Taxonomic Group") +
+  theme(text = element_text(size = 16), legend.position = "top")
+```
+
+```{r}
+#cali residents
+fit_dat <- tox_dat_tidy %>%
+    filter(
+      ca_resident == "Yes",
+      !is.na(noec_ssd)) %>%
+    group_by(Species) %>%
+    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    ungroup() %>%
+    group_by(Species, Conc, group) %>%
+    summarise()    
+
+ssd_fits <- ssd_fit_dists(fit_dat)
+
+ssd_pred <- predict(ssd_fits, ci = TRUE)
+
+ssd_plot(fit_dat, ssd_pred,
+  label = "Species",
+  color = "group",
+  xlab = "Concentration (µg/L)",
+  ribbon = TRUE,
+  label_size = 4,
+) +
+  expand_limits(x = 3000) +
+  scale_color_viridis_d() +
+  labs(title = "California Residents", color = "Taxonomic Group") +
+  theme(text = element_text(size = 16))
+```
+
+```{r}
+#cali native genus
+fit_dat <- tox_dat_tidy %>%
+    filter(
+      ca_native_genus == "Yes",
+      !is.na(noec_ssd)) %>%
+    group_by(Species) %>%
+    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    ungroup() %>%
+    group_by(Species, Conc, group) %>%
+    summarise()    
+
+ssd_fits <- ssd_fit_dists(fit_dat)
+
+ssd_pred <- predict(ssd_fits, ci = TRUE)
+
+ssd_plot(fit_dat, ssd_pred,
+  label = "Species",
+  color = "group",
+  xlab = "Concentration (µg/L)",
+  ribbon = TRUE,
+  label_size = 4,
+) +
+  expand_limits(x = 3000) +
+  scale_color_viridis_d() +
+  labs(title = "California Native Genus", color = "Taxonomic Group") +
+  theme(text = element_text(size = 16))
+```
+
+```{r}
+#cali_native - FAILS
+fit_dat <- tox_dat_tidy %>%
+    filter(
+      ca_native == "Yes",
+      !is.na(noec_ssd)) %>%
+    group_by(Species) %>%
+    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    ungroup() %>%
+    group_by(Species, Conc, group) %>%
+    summarise()    
+
+ssd_fits <- ssd_fit_dists(fit_dat)
+
+ssd_pred <- predict(ssd_fits, ci = TRUE)
+
+ssd_plot(fit_dat, ssd_pred,
+  label = "Species",
+  color = "group",
+  xlab = "Concentration (µg/L)",
+  ribbon = TRUE,
+  label_size = 4,
+) +
+  expand_limits(x = 3000) +
+  scale_color_viridis_d() +
+  labs(title = "California Native", color = "Taxonomic Group") +
+  theme(text = element_text(size = 16))
+```
+
+# Acute Chronic Ratios
+
+```{r}
+geo_mean <- function(x) exp(mean(log(x[x > 0]), na.rm = TRUE))
+```
+
+```{r}
+
+#Do we have acute and chronic data for each species?
+species_sum <- tox_dat %>%
+  group_by(Species, group) %>%
+  summarise(
+    acute   = if_else(any(chronic_acute == "acute"),   "Yes", "No"),
+    chronic = if_else(any(chronic_acute == "chronic"), "Yes", "No"),
+    .groups = "drop"
+  ) %>%
+  arrange(group, Species)
+
+both_rows <- which(species_sum$acute == "Yes" & species_sum$chronic == "Yes")
+
+species_sum %>%
+  knitr::kable(col.names = c("Species", "Group", "Acute", "Chronic")) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::row_spec(both_rows, background = "#90EE90")
+
+#Calculate the acute-chronic ratio for species where acute and chronic data are available
+both_species <- species_sum$Species[both_rows]
+
+acr_table <- tox_dat %>%
+  filter(Species %in% both_species) %>%
+  #just use noecs without applying assessment factors 
+  filter(
+    !(note == "NOEC from EC50"),
+    !is.na(noec_ug_l)
+  ) %>%
+  #calculate the median chronic and acute NOECs
+  group_by(Species, chronic_acute) %>%
+  mutate(median_noec = median(noec_ug_l)) %>%
+  ungroup() %>%
+  group_by(Species, group, chronic_acute, median_noec) %>%
+  summarise(.groups = "drop") %>%
+  pivot_wider(names_from = chronic_acute, values_from = median_noec) %>%
+  mutate(acr = acute/chronic)
+
+#take the geometric mean of all of the acute chronic ratios to get the Final Acute Chronic Ratio
+FACR <- geo_mean(acr_table$acr)
+
+
+
+```

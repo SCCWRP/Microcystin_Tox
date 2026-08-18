@@ -1,0 +1,106 @@
+﻿source,Species,reference,life_stage,endpoint,congener,exp_days,chronic_acute,noec_ug_l,loec_ug_l,other_dose_ug_l,doses,group,ca_resident,ca_native,ca_native_genus,ca_relevant,note
+Mehinto,African clawed frog (Xenopus laevis),"Dvorakova et al. 2002, Environmental Toxicology, 17",Embryonic,Development,Microcystin-LR,4,acute,10,25,,,Chordata,Yes,No,No,Yes,Invasive
+Mehinto,African clawed frog (Xenopus laevis),"Dvorakova et al. 2002, Environmental Toxicology, 17",Embryonic,Mortality,Microcystin-LR,4,acute,250,500,,,Chordata,Yes,No,No,Yes,Invasive
+Mehinto,African clawed frog (Xenopus laevis),"Dvorakova et al. 2002, Environmental Toxicology, 17(6)",Embryonic,Growth,Microcystin-LR,4,acute,500,,,,Chordata,Yes,No,No,Yes,Invasive
+Mehinto,African clawed frog (Xenopus laevis),"Fischer and Dietrich, 2000, Aquatic Toxicology, 49",Embryonic,Growth + Development,"Microcystin-LR, RR",5,acute,2000,,,,Chordata,Yes,No,No,Yes,Invasive
+Mehinto,African clawed frog (Xenopus laevis),"Fischer and Dietrich, 2000, Aquatic Toxicology, 49",Embryonic,Mortality,"Microcystin-LR, RR",5,acute,2000,,,,Chordata,Yes,No,No,Yes,Invasive
+New,African Clawed Frog (Xenopus laevis),"Li et al. 2022, Frontiers in Microbiology 895383",Juvenile,Subcellular (gene and protein),Microcystin-LR,56,chronic,,1,,4,Chordata,Yes,No,No,Yes,Invasive
+New,African Clawed Frog (Xenopus laevis),"Li et al. 2022, Frontiers in Microbiology 895383",Juvenile,Histology,Microcystin-LR,56,chronic,,1,,4,Chordata,Yes,No,No,Yes,Invasive
+New,American bullfrog (Lithobates catesbeianus),Jiang et al. 2022. Toxins 14,Juvenile,Subcellular (gene and protein),Microcystin-LR,30,chronic,,0.5,,2,Chordata,Yes,No,No,Yes,Invasive
+New,American Bullfrog (Lithobates catesbeianus),"Wang et al 2023, Aquatic Toxicology 258",Juvenile,Subcellular (gene),Microcystin-LR,30,chronic,,0.5,,2,Chordata,Yes,No,No,Yes,Invasive
+New,American Bullfrog (Lithobates catesbeianus),"Wang et al 2023, Aquatic Toxicology 258",Juvenile,Histology,Microcystin-LR,30,chronic,,0.5,,2,Chordata,Yes,No,No,Yes,Invasive
+New,Asian Clam (Corbicula fluminea),"Zhang et al. 2023, Fish and Shellfish Immunology 139",Adult,Subcellular (gene),Microcystin-LR,4,acute,,320,,1,Benthic Crustacean,Yes,No,No,Yes,Invasive
+Mehinto,Axolotl (Ambystoma mexicanum),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Development,Microcystin-LR,35,chronic,5,50,,,Chordata,No,No,No,No,
+Mehinto,Axolotl (Ambystoma mexicanum),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Mortality,Microcystin-LR,35,chronic,50,,,,Chordata,No,No,No,No,
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),"Liu et al. 2024, Environmental Science and Technology 58",Adult,Subcellular (gene and protein),Microcystin-LR,21,chronic,,1,,1,Chordata,No,No,No,No,
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),"Zhang et al. 2024, Environmental Pollution 358",Adult,Histology,Microcystin-LR,21,chronic,,1,,2,Chordata,No,No,No,No,
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),"Zhang et al. 2024, Environmental Pollution 358",Adult,Subcellular (gene and protein),Microcystin-LR,21,chronic,,1,,2,Chordata,No,No,No,No,NOEC from LC50
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),"Liu et al. 2024, Environmental Science and Technology 58",Juvenile,Development,Microcystin-LR,30,chronic,,1,,1,Chordata,No,No,No,No,NOEC from EC50
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),"Liu et al. 2024, Environmental Science and Technology 58",Juvenile,Subcellular (gene and protein),Microcystin-LR,30,chronic,,1,,1,Chordata,No,No,No,No,
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),Zhang et al. 2024 Science of the Total Environment 906,Juvenile,Histology,Microcystin-LR,60,chronic,,1,,2,Chordata,No,No,No,No,
+New,Black-Spotted Pond Frogs (Pelophylax nigromaculatus),Zhang et al. 2024 Science of the Total Environment 906,Juvenile,Subcellular (protein),Microcystin-LR,60,chronic,,1,,2,Chordata,No,No,No,No,
+Mehinto,Brine shrimp (Artemia salina),"Delaney and Wilkins, 1995, Toxicon, 33",Larval,Mortality,Microcystin-LR,1,acute,2000,10000,,,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Brown trout (Salmo trutta),"Best et al. 2001, Fish Physiology and Biochemistry, 24",Larval,Development,Microcystin-LR,1,acute,,5,,,Salmonid,Yes,No,Yes,Yes,
+Mehinto,Brown trout (Salmo trutta),"Bury et al. 1995, Journal of Fish Biology, 46",Larval,Growth,Microcystins,63,chronic,,41,,,Salmonid,Yes,No,Yes,Yes,
+Mehinto,Brown trout (Salmo trutta),"Bury et al. 1995, Journal of Fish Biology, 46",Larval,Growth,Microcystin-LR,63,chronic,,43,,,Salmonid,Yes,No,Yes,Yes,
+Mehinto,Daphnia (Ceriodaphnia dubia),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Mortality,Microcystins,7,acute,1.5,2.5,,,Planktonic Crustacean,Yes,No,Yes,Yes,
+Mehinto,Daphnia (Ceriodaphnia dubia),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Adult,Reproduction,Microcystins,7,acute,0.5,1,,,Planktonic Crustacean,Yes,No,Yes,Yes,
+Mehinto,Daphnia (Daphnia magna),"Freitas et al. 2014, Harmful Algae, 31",Neonate,Mortality,Microcystin-LR,2,acute,1202,2404,,,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Pawlik-Skowrinska & Bownik, 2021. Toxicn 198",Adult,Behavior,Microcystin-LR,2,acute,0.2,0.5,EC50 = 2.0,4,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Pawlik-Skowrinska & Bownik, 2021. Toxicn 198",Adult,Behavior,Microcystin-LF,2,acute,0.28,0.5,EC50 = 2.8,4,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Mortality,Microcystin-LR,2,acute,6.25,10,EC50 = 13.46,9,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
+New,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Reproduction,Microcystins,21,chronic,4.585,2.5,"EC10 = 11.83, EC25 = 23.29, EC50 = 45.85",7,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Growth,Microcystins,21,chronic,,2.5,,,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Mortality,Microcystins,21,chronic,5,10,,,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
+Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Reproduction,Microcystins,21,chronic,,2.5,,,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Growth,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Reproduction,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Freshwater mussel (Lampsilis siliquoidea),"Gene et al. 2019, Environmental Toxicology and Chemistry 38",Larval,Mortality,Microcystin-LR,3,acute,22,130,,,"Rotifera, Anelida, Mollusca",No,No,No,No,
+Mehinto,Freshwater mussel (Lampsilis siliquoidea),"Gene et al. 2019, Environmental Toxicology and Chemistry 38",Juvenile,Mortality,Microcystin-LR,28,chronic,0.97,2.1,,,"Rotifera, Anelida, Mollusca",No,No,No,No,
+New,Freshwater planerian (Dugesia japonica),"Jin et al. 2024, Integrative Zoology",Adult,Mortality,Microcystin-LR,4,acute,356,,LC50 = 3557,6,"Rotifera, Anelida, Mollusca",No,No,Yes,Yes,
+New,Freshwater planerian (Dugesia japonica),"Jin et al. 2024, Integrative Zoology",Adult,Subcellular (protein),Microcystin-LR,7,acute,,2700,,3,"Rotifera, Anelida, Mollusca",No,No,Yes,Yes,
+New,Freshwater planerian (Dugesia japonica),"Jin et al. 2024, Integrative Zoology",Adult,Histology,Microcystin-LR,10,acute,,2700,,1,"Rotifera, Anelida, Mollusca",No,No,Yes,Yes,
+New,Freshwater planerian (Dugesia japonica),"Jin et al. 2024, Integrative Zoology",Adult,Growth,Microcystin-LR,14,acute,,1800,,1,"Rotifera, Anelida, Mollusca",No,No,Yes,Yes,
+New,Freshwater snail (Radix swinhoei),"Zhang et al. 2016, Environ Sci Pollut Res 23",Adult,Subcellular (protein),Microcystin-LR,4,acute,,10,,2,"Rotifera, Anelida, Mollusca",No,No,No,No,
+Mehinto,Giant freshwater prawn (Macrobrachium rosenbergii),"Zhang et al 2019, Chemosphere 222",Adult,Growth,Microcystin-LR,7,acute,5,,,,Benthic Crustacean,No,No,No,No,
+Mehinto,Giant freshwater prawn (Macrobrachium rosenbergii),"Zhang et al 2019, Chemosphere 222",Adult,Reproduction,Microcystin-LR,7,acute,5,,,,Benthic Crustacean,No,No,No,No,
+Mehinto,Giant freshwater prawn (Macrobrachium rosenbergii),"Zhang et al 2019b, Chemosphere 222",Adult,Reproduction,Microcystin-LR,7,acute,,0.5,,,Benthic Crustacean,No,No,No,No,
+Mehinto,Giant freshwater prawn (Macrobrachium rosenbergii),"Zhang et al 2019a, Fish and Shellfish Immunology 89",Adult,Growth,Microcystin-LR,21,chronic,,0.5,,,Benthic Crustacean,No,No,No,No,
+Mehinto,Giant freshwater prawn (Macrobrachium rosenbergii),"Zhang et al 2019b, Chemosphere 222",Adult,Growth,Microcystin-LR,21,chronic,0.5,5,,,Benthic Crustacean,No,No,No,No,
+New,Midges (Chironomus riparius),"Stankovich et al. 2022, Aquatic Toxicology",Larval,Mortality,Microcystin-LR,2,acute,1,5,,3,Insect,Yes,No,Yes,Yes,
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Juvenile,Growth,Microcystin-LR,35,chronic,33,,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Adult,Growth,Microcystin-LR,35,chronic,33,,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Juvenile,Mortality,Microcystin-LR,35,chronic,,33,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Adult,Mortality,Microcystin-LR,35,chronic,,33,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Juvenile,Reproduction,Microcystin-LR,35,chronic,,33,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Mud snail (Potamopyrgus antipodarum),"Gerard and Poullain 2005, Environmental Pollution, 138",Adult,Reproduction,Microcystin-LR,35,chronic,,33,,,"Rotifera, Anelida, Mollusca",Yes,No,No,Yes,Invasive
+Mehinto,Nile tilapia (Oreochromis niloticus),"Abdel-Latif and Khashaba 2017, Veterinary World, 10",Adult,Mortality,Microcystin-LR,21,acute,500,,,,Second Fish Family,Yes,No,No,Yes,Invasive
+New,Nile tilapia (Oreochromis niloticus),"Li et al. 2024, Toxins 16, 3",Juvenile,Subcellular (protein),Microcystin-LR,60,chronic,3,10,,4,Second Fish Family,Yes,No,No,Yes,Invasive
+New,Nile tilapia (Oreochromis niloticus),"Li et al. 2024, Toxins 16, 3",Juvenile,Histology,Microcystin-LR,60,chronic,3,10,,4,Second Fish Family,Yes,No,No,Yes,Invasive
+New,Pacific white shrimp (Litopenaeus vannamei),"Duan et al 2021, Ecotox and Environ Safety 228",Adult,Subcellular (gene and protein),Microcystin-LR,3,acute,,0.1,,2,Benthic Crustacean,No,No,No,No,
+New,Pacific white shrimp (Litopenaeus vannamei),"Duan et al. 2022, Science of the Total Environment 820",Juveniles,Subcellular (gene and protein),Microcystin-LR,3,acute,,0.1,,2,Benthic Crustacean,No,No,No,No,
+New,Pacific white shrimp (Litopenaeus vannamei),"Duan et al. 2022, Science of the Total Environment 820",Juveniles,Histology,Microcystin-LR,3,acute,,0.1,,2,Benthic Crustacean,No,No,No,No,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Best et al. 2003, Aquatic Toxicology 64",Adult,Growth,Microcystins,1,acute,,100,,,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Gelinas et al. 2012, Comparative Biochemistry and Physiology, Part B, 161",Juvenile,Growth,Microcystin-LR,4,acute,5,,,,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Gelinas et al. 2012, Comparative Biochemistry and Physiology, Part B, 161",Juvenile,Growth,Microcystin-LR,4,acute,5,,,,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Tencalla et al. 1994, Toxicon, 35",Adult,Mortality,Microcystin-LR,4,acute,73,,,,Salmonid,Yes,Yes,Yes,Yes,
+New,Rainbow trout (Oncorhynchus mykiss),"Mielewczyk et al. 2023, Exotoxicity Environ Safety, 114542",Juvenile,Subcellular (protein),Microcystin-LR,28,chronic,2,49,,2,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Development,Microcystin-RR,32,chronic,,0.5,,,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Development,Microcystin-YR,32,chronic,0.5,5,,,Salmonid,Yes,Yes,Yes,Yes,
+Mehinto,Rainbow trout (Oncorhynchus mykiss),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Development,Microcystin-LR,32,chronic,5,50,,,Salmonid,Yes,Yes,Yes,Yes,
+New,Rotifer (Brachionus calyciflorus),"Bownik et al. 2022, Journal of Haz Materials 438",Juvenile,Behavior,Microcystin-LR,1,acute,24.6,100,EC50 = 246,4,"Rotifera, Anelida, Mollusca",Yes,Yes,Yes,Yes,
+New,Rotifer (Brachionus calyciflorus),"Bownik et al. 2022, Journal of Haz Materials 438",Juvenile,Subcellular (gene and protein),Microcystin-LR,1,acute,40.7,100,EC50 = 407,4,"Rotifera, Anelida, Mollusca",Yes,Yes,Yes,Yes,
+New,Rotifer (Brachionus calyciflorus),"Bownik et al. 2022, Journal of Haz Materials 438",Juvenile,Histology,Microcystin-LR,1,acute,826.3,100,EC50 = 8263,4,"Rotifera, Anelida, Mollusca",Yes,Yes,Yes,Yes,
+Mehinto,Water flea (Bosmina longirostris),"Lamb et al. 2019, PLoS ONE 14",Adult,Mortality,Microcystin-LR,1,acute,5,50,,,Planktonic Crustacean,Yes,No,Yes,Yes,
+Mehinto,Yellowtail tetra (Astyanax altiparanae),"Fernandes et al. 2019, Toxins 11",Larval,Mortality,Microcystins,1,acute,0.44,0.59,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Chen et al. 2018, Environmental Pollution, 241",Embryonic & Larval,Mortality,Microcystin-LR,2,acute,300,,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Wei et al. 2020, Science of the Total Environment 713",Embryonic,Development,Microcystin-LR,2,acute,,6,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Wei et al. 2020, Science of the Total Environment 713",Embryonic,Development,Microcystin-LR,3,acute,1800,2400,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Wei et al. 2020, Science of the Total Environment 713",Embryonic,Mortality,Microcystin-LR,3,acute,1800,2400,,,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2024, Toxins 12",Larval,Development,Microcystin-LR,4,acute,0.9,1.8,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2024, Toxins 12",Larval,Mortality,Microcystin-LR,4,acute,0.9,1.8,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2024, Toxins 12",Larval,Growth,Microcystin-LR,4,acute,0.9,1.8,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2024, Toxins 12",Larval,Subcellular (gene and protein),Microcystin-LR,4,acute,,0.9,,3,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Growth,Microcystin-LR,6,acute,,0.5,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Oberemm et al. 1999, Environmental Toxicology, 14",Embryonic/Juvenile,Mortality,Microcystin-RR,6,acute,0.5,5,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Wei et al. 2020, Science of the Total Environment 713",Embryonic,Development,Microcystin-LR,6,acute,60,600,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Chen et al. 2018, Environmental Pollution, 241",Embryonic & Larval,Development,Microcystin-LR,7,acute,100,300,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Baganz et. al 1998, Water Research, 32",Adult,Reproduction,Microcystin-LR,25,acute,15,50,,,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Yang et al., 2022, Comparative Biochemistry and Phsiology, Part C",Adult,Histology,Microcystin-LR,30,chronic,3,30,,2,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Yang et al., 2022, Comparative Biochemistry and Phsiology, Part C",Adult,Subcellular (gene and protein),Microcystin-LR,30,chronic,,3,,2,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Zhan et al. 2020, Environmental Pollution 259",Adult,Development,Microcystin-LR,30,chronic,1,5,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Zhan et al. 2020, Environmental Pollution 259",Adult,Mortality,Microcystin-LR,30,chronic,5,20,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Zhan et al. 2020, Environmental Pollution 259",Adult,Reproduction,Microcystin-LR,30,chronic,1,5,,,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Zhao et al. Science of the Total Environment, 792",Adult,Reproduction,Microcystin-LR,42,chronic,,5,,2,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Cheng et al. 2017, Environmental Pollution 230",Larval,Growth,Microcystin-LR,45,chronic,,1,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Cheng et al. 2017, Environmental Pollution 230",Larval,Development,Microcystin-LR,45,chronic,1,5,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Cheng et al. 2017, Environmental Pollution 230",Larval,Mortality,Microcystin-LR,45,chronic,,1,,,Second Fish Family,No,No,No,No,
+Mehinto,Zebrafish (Danio rerio),"Cheng et al. 2017, Environmental Pollution 230",Larval,Reproduction,Microcystin-LR,45,chronic,,1,,,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2021, Science of the Total Environment, 774",Adult,Reproduction,Microcystin-LR,45,chronic,4.5,22.5,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2021, Science of the Total Environment, 774",Embryonic,Behavior,Microcystin-LR,45,chronic,4.5,22.5,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2021, Science of the Total Environment, 774",Embryonic,Histology,Microcystin-LR,45,chronic,4.5,22.5,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Wu et al. 2021, Science of the Total Environment, 774",Embryonic,Subcellular (gene),Microcystin-LR,45,chronic,4.5,22.5,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Lin et al. 2023, Science of the Total Environment, 876",Adult,Histology,Microcystin-LR,60,chronic,5,25,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Lin et al. 2023, Science of the Total Environment, 876",Adult,Subcellular (protein),Microcystin-LR,60,chronic,5,25,,3,Second Fish Family,No,No,No,No,
+New,Zebrafish (Danio rerio),"Si et al. 2023, Environ Pollution",Adult,Subcellular (gene and protein),Microcystin-LR,90,chronic,,5,,2,Second Fish Family,No,No,No,No,
+Mehinto,Zooplankton (Diaptomus birgei),"DeMott et al. 1991, Limnology and Oceanography, 36",Adult,Mortality,Microcystin-LR,2,acute,,500,,,Planktonic Crustacean,No,No,No,No,
