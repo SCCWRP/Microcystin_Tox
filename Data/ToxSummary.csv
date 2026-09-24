@@ -28,13 +28,12 @@ Mehinto,Daphnia (Ceriodaphnia dubia),"Shahmohamadloo et al. 2020, Ecotoxicology 
 Mehinto,Daphnia (Daphnia magna),"Freitas et al. 2014, Harmful Algae, 31",Neonate,Mortality,Microcystin-LR,2,acute,1202,2404,,,Planktonic Crustacean,No,No,Yes,Yes,
 New,Daphnia (Daphnia magna),"Pawlik-Skowrinska & Bownik, 2021. Toxicn 198",Adult,Behavior,Microcystin-LR,2,acute,0.2,0.5,EC50 = 2.0,4,Planktonic Crustacean,No,No,Yes,Yes,
 New,Daphnia (Daphnia magna),"Pawlik-Skowrinska & Bownik, 2021. Toxicn 198",Adult,Behavior,Microcystin-LF,2,acute,0.28,0.5,EC50 = 2.8,4,Planktonic Crustacean,No,No,Yes,Yes,
-New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Mortality,Microcystin-LR,2,acute,6.25,10,EC50 = 13.46,9,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
-New,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Reproduction,Microcystins,21,chronic,,2.5,"EC10 = 11.83, EC25 = 23.29, EC50 = 45.85",7,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Ecotox. and Environ. Safety 220",Neonate,Mortality,Microcystin-LR,2,acute,6.25,10,EC50 = 13.46,9,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
 Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Growth,Microcystins,21,chronic,,2.5,,,Planktonic Crustacean,No,No,Yes,Yes,
-Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Mortality,Microcystins,21,chronic,5,10,,,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
-Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Reproduction,Microcystins,21,chronic,,2.5,,,Planktonic Crustacean,No,No,Yes,Yes,NOEC from EC50
-New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Growth,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
-New,Daphnia (Daphnia magna),"Wan et al. 2021, Exotox. and Environ. Safety 220",Neonate,Reproduction,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Mortality,Microcystins,21,chronic,5,10,,,Planktonic Crustacean,No,No,Yes,Yes,
+Mehinto,Daphnia (Daphnia magna),"Shahmohamadloo et al. 2020, Ecotoxicology and Environmental Safety 188",Neonate,Reproduction,Microcystins,21,chronic,,2.5,,,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Ecotox. and Environ. Safety 220",Neonate,Growth,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
+New,Daphnia (Daphnia magna),"Wan et al. 2021, Ecotox. and Environ. Safety 220",Neonate,Reproduction,Microcystin-LR,21,chronic,50,250,,4,Planktonic Crustacean,No,No,Yes,Yes,
 Mehinto,Freshwater mussel (Lampsilis siliquoidea),"Gene et al. 2019, Environmental Toxicology and Chemistry 38",Larval,Mortality,Microcystin-LR,3,acute,22,130,,,"Rotifera, Annelida, Mollusca",No,No,No,No,
 Mehinto,Freshwater mussel (Lampsilis siliquoidea),"Gene et al. 2019, Environmental Toxicology and Chemistry 38",Juvenile,Mortality,Microcystin-LR,28,chronic,0.97,2.1,,,"Rotifera, Annelida, Mollusca",No,No,No,No,
 New,Freshwater planarian (Dugesia japonica),"Jin et al. 2024, Integrative Zoology",Adult,Mortality,Microcystin-LR,4,acute,356,,LC50 = 3557,6,Other Phylum,No,No,Yes,Yes,
