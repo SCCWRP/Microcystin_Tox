@@ -1,7 +1,7 @@
 ---
-title: "Criterion Continuous Concentration (CCC) Derivation for Microcystin-LR"
-subtitle: "EPA (1985) Guidelines methodology, worked example"
-author: "SCCWRP"
+title: "Criterion Continuous Concentration (CCC) Derivation for Microcystins in California Freshwater Aquatic Species"
+subtitle: "EPA (1985) Guidelines methodology"
+author: "SCCWRP, Leah Thornton Hampton"
 date: today
 format:
   html:
@@ -182,6 +182,117 @@ subset**, so the script proceeds with EPA's FAV/FACR fallback method (with
 the caveat, confirmed in Step 6 below, that the acute side doesn't clear
 the bar either).
 
+### Variant: what if censored (unbounded) NOEC/LOEC rows are included?
+
+The calculation above excludes any chronic row missing either bound, since
+a Chronic Value is properly defined as $\sqrt{\text{NOEC}\times\text{LOEC}}$
+— a one-sided ("censored") row only tells you the true threshold is
+*somewhere above* a NOEC-only value, or *somewhere below* a LOEC-only
+value; it isn't itself a Chronic Value. This variant asks: what if we use
+that single available bound as a stand-in for the Chronic Value anyway, to
+see whether it changes the taxonomic-sufficiency picture?
+
+Doing this is **not** standard EPA practice, and it introduces a
+direction-specific bias: substituting a bare NOEC understates the true
+Chronic Value (overly conservative/protective), while substituting a bare
+LOEC overstates it (under-protective). Mixing both types into one
+geometric mean, as done below, is a further deviation on top of that. This
+section is included purely as a documented sensitivity check, not as an
+input to the main CCC calculation that follows.
+
+```{r chronic-variant}
+# Surrogate ChV: use sqrt(NOEC*LOEC) where both are present, otherwise
+# fall back to whichever single bound is available.
+chronic_all$ChV_surrogate <- ifelse(
+  !is.na(chronic_all$noec_ug_l) & !is.na(chronic_all$loec_ug_l),
+  sqrt(chronic_all$noec_ug_l * chronic_all$loec_ug_l),
+  ifelse(!is.na(chronic_all$noec_ug_l), chronic_all$noec_ug_l,
+         ifelse(!is.na(chronic_all$loec_ug_l), chronic_all$loec_ug_l, NA))
+)
+chronic_all$bound_type <- ifelse(
+  !is.na(chronic_all$noec_ug_l) & !is.na(chronic_all$loec_ug_l), "both",
+  ifelse(!is.na(chronic_all$noec_ug_l), "NOEC-only (censored above)",
+         ifelse(!is.na(chronic_all$loec_ug_l), "LOEC-only (censored below)",
+                "neither")))
+
+chronic_variant <- chronic_all[!is.na(chronic_all$ChV_surrogate), ]
+
+cat("Genera with a usable value, both-required version:", length(unique(chronic_usable$genus)), "\n")
+cat("Genera with a usable value, censored-included variant:", length(unique(chronic_variant$genus)), "\n")
+
+chronic_variant[, c("Species", "genus", "group", "bound_type", "ChV_surrogate")]
+```
+
+```{r chronic-variant-smcv-gmcv}
+smcv_variant <- aggregate(ChV_surrogate ~ binomial + genus, data = chronic_variant, FUN = geomean)
+names(smcv_variant)[names(smcv_variant) == "ChV_surrogate"] <- "SMCV"
+
+gmcv_variant <- aggregate(SMCV ~ genus, data = smcv_variant, FUN = geomean)
+names(gmcv_variant)[names(gmcv_variant) == "SMCV"] <- "GMCV"
+gmcv_variant <- gmcv_variant[order(gmcv_variant$GMCV), ]
+
+smcv_variant
+gmcv_variant
+```
+
+```{r chronic-variant-groups}
+unique(chronic_variant[, c("genus", "group")])
+```
+
+Including the censored rows brings the chronic side from `r nrow(gmcv)`
+genera up to `r nrow(gmcv_variant)` genera — `r nrow(gmcv_variant)` is
+exactly the bare minimum the FCV formula needs to run at all (it requires
+at least 4 GMCVs). But taxonomic **category** coverage barely moves: the
+newly-added genus (*Salmo*) falls in the same Salmonid category as
+*Oncorhynchus*, which was already represented, so category coverage stays
+at `r length(unique(chronic_variant$group))` of the 8 required — no closer
+to EPA's minimum than before, just barely enough genera to make the
+arithmetic run.
+
+```{r chronic-variant-fcv}
+N_variant <- nrow(gmcv_variant)
+
+if (N_variant >= 4) {
+  gmcv_variant$R      <- seq_len(N_variant)
+  gmcv_variant$P      <- gmcv_variant$R / (N_variant + 1)
+  gmcv_variant$lnGMCV <- log(gmcv_variant$GMCV)
+  gmcv_variant$sqrtP  <- sqrt(gmcv_variant$P)
+
+  four_v <- head(gmcv_variant, 4)
+
+  sum_lnGMCV_v  <- sum(four_v$lnGMCV)
+  sum_lnGMCV2_v <- sum(four_v$lnGMCV^2)
+  sum_P_v       <- sum(four_v$P)
+  sum_sqrtP_v   <- sum(four_v$sqrtP)
+
+  S2_v  <- (sum_lnGMCV2_v - (sum_lnGMCV_v^2) / 4) / (sum_P_v - (sum_sqrtP_v^2) / 4)
+  S_v   <- sqrt(S2_v)
+  L_v   <- (sum_lnGMCV_v - S_v * sum_sqrtP_v) / 4
+  A_v   <- S_v * sqrt(0.05) + L_v
+  FCV_variant <- exp(A_v)
+
+  data.frame(quantity = c("N genera", "S^2", "S", "L",
+                           "A = S*sqrt(0.05)+L", "FCV (variant, ug/L)"),
+             value = c(N_variant, S2_v, S_v, L_v, A_v, FCV_variant))
+} else {
+  FCV_variant <- NA
+  cat("Only", N_variant, "genera -- still cannot run the 4-point formula.\n")
+}
+```
+
+```{r chronic-variant-sanity}
+if (!is.na(FCV_variant)) FCV_variant < min(gmcv_variant$GMCV)
+```
+
+**Takeaway:** this variant produces FCV ≈ `r if (!is.na(FCV_variant)) round(FCV_variant, 3) else NA` µg/L
+and technically clears the bare mathematical minimum (4 GMCVs) — but it
+does so only by mixing in one-sided censored values with an unresolved
+directional bias, and it makes no progress on the taxonomic-category
+shortfall that is the actual reason this dataset can't support a
+guideline-compliant Final Chronic Value. It is not used in the CCC
+calculation that follows; the main pipeline continues with the
+both-bounds-required `chronic_usable`/`smcv`/`gmcv` objects from above.
+
 ## Step 5 — Acute side: Acute Value, SMAV, GMAV
 
 ```{r acute-av}
@@ -342,7 +453,12 @@ cat(sprintf("CCC = %.4f ug/L microcystin-LR (illustrative only -- see headline c
   retrieved primary source** in the session that produced this script (see
   Step 6).
 - Excluding all censored (single-bound) rows is conservative for
-  transparency but discards real information.
+  transparency but discards real information. A documented variant in
+  Step 4 tests including them as surrogate Chronic Values: it just barely
+  reaches the 4-GMCV minimum needed to run the FCV formula (FCV ≈ 0.573
+  µg/L), but adds no new taxonomic categories, so it doesn't move the
+  dataset any closer to being guideline-compliant — see that section for
+  the full caveats on why this isn't standard practice.
 - **The result is highly scope-sensitive**: this version (acute restricted
   to Mortality only) gives CCC ≈ 0.0277 µg/L; a prior version (acute using
   all four apical endpoints) gave CCC ≈ 0.0235 µg/L; and the earliest

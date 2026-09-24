@@ -1,16 +1,84 @@
 ---
-title: "Microcystin Toxicity"
-format: html
+title: "Species Sensitivity Distribution (SSD) Construction for Microcystins in California Freshwater Aquatic Species"
+subtitle: "EPA (1985) Guidelines methodology"
+author: "SCCWRP, Leah Thornton Hampton"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
+    df-print: kable
+  docx:
+    toc: true
+execute:
+  echo: true
+  warning: false
 ---
 
-# Setup
+## Overview
+
+This document constructs Species Sensitivity Distributions (SSDs) for
+microcystin toxicity data (`ToxSummary.csv`) using the `ssdtools` R package.
+An SSD describes the variation in sensitivity across species by fitting a
+statistical distribution — here a log-normal — to single per-species toxicity
+values, then reading the 5th percentile (HC5) as the concentration protective
+of 95% of species.
+
+Four data-preparation decisions are applied before fitting, in this order:
+
+1. **Endpoint filter:** only apical endpoints (*Growth, Development,
+   Reproduction, Mortality,* or *Growth + Development*) are retained.
+   Sub-organismal endpoints (Behavior, Histology, Subcellular) are excluded
+   because they do not represent whole-organism effects.
+2. **NOEC derivation:** where a NOEC is directly reported it is used as-is.
+   Where only a LOEC is available, `NOEC = LOEC / 2` is used as a conservative
+   surrogate — this follows a common practice of treating the midpoint between
+   the assumed true NOEC and the LOEC as the best single estimate.
+3. **Acute-to-chronic adjustment:** acute test values are divided by 10 before
+   inclusion. This is a simple fixed acute-to-chronic ratio (ACR = 10) used to
+   place acute and chronic data on a comparable chronic-equivalent scale,
+   consistent with the default ACR commonly applied when species-specific ACRs
+   are unavailable.
+4. **Per-species collapse:** the median adjusted NOEC across all tests for a
+   species is used as that species' single SSD input value, preventing heavily
+   studied species from disproportionately influencing the fit.
+
+Four species-scope variants are presented:
+
+| Section | Filter | Rationale |
+|---|---|---|
+| All Species | none | broadest possible dataset |
+| California Relevant | `ca_relevant == "Yes"` | species judged relevant to California conditions (residents + common non-native test species) |
+| California Residents | `ca_resident == "Yes"` | species with established populations in California |
+| California Native Genus | `ca_native_genus == "Yes"` | species whose genus is native to California, even if the tested species itself is not |
+
+A fifth variant (`ca_native == "Yes"`, strictly native species only) is
+attempted but fails due to insufficient data — see the final section.
+
+## Setup
+
 ```{r}
 #| label: packages
 library(tidyverse)
 library(ssdtools)
 library(ggplot2)
 
+zissou1_extended <- c(
+  navy   = "#1c1c84",
+  teal   = "#3B9AB2",
+  blue   = "#78B7C5",
+  yellow = "#EBCC2A",
+  gold   = "#E1AF00",
+  red    = "#F21A00",
+  maroon = "#e86e0b")
+
 ```
+
+The `zissou1_extended` palette provides seven visually distinct colors for
+differentiating taxonomic groups across plot panels.
+
+## Data Import and Preparation
 
 ```{r}
 #import
@@ -33,6 +101,24 @@ tox_dat_tidy <- tox_dat %>%
 
 ```
 
+Invasive species are flagged with an asterisk in the `Species` label so they
+are visually distinguishable on the SSD plots without being excluded from the
+fit. Whether to exclude invasives from a regulatory SSD is a policy decision
+not resolved here.
+
+## SSD Plots
+
+Each plot section below follows the same workflow: filter to the target species
+scope → collapse to one median NOEC per species → fit a log-normal distribution
+via `ssd_fit_dists()` → generate predicted percentiles with confidence
+intervals via `predict()` → plot.
+
+### All Species
+
+The "kitchen sink" variant uses the full endpoint-filtered dataset with no
+geographic scope restriction. It represents the most data-rich SSD and serves
+as a baseline for comparing how restricting scope shifts the distribution.
+
 ```{r}
 #kitchen sink
 fit_dat <- tox_dat_tidy %>%
@@ -41,9 +127,9 @@ fit_dat <- tox_dat_tidy %>%
     mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
     ungroup() %>%
     group_by(Species, Conc, group) %>%
-    summarise()    
+    summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat)
+ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
 ssd_pred <- predict(ssd_fits, ci = TRUE)
 
@@ -53,12 +139,21 @@ ssd_plot(fit_dat, ssd_pred,
   xlab = "Concentration (µg/L)",
   ribbon = TRUE,
   label_size = 4,
+  hc = NULL
 ) +
   expand_limits(x = 3000) +
   scale_color_viridis_d() +
   labs(title = "All Species", color = "Taxonomic Group") +
   theme(text = element_text(size = 16))
 ```
+
+### California Relevant Species
+
+This variant applies the `ca_relevant == "Yes"` filter, which retains species
+judged relevant to California aquatic environments — including both residents
+and widely used non-native test species (e.g., standard lab strains).
+This is the scope most comparable to the CCC derivation in `CCC.qmd`, which
+uses the same `ca_relevant` flag.
 
 ```{r}
 #cali relevant
@@ -70,9 +165,9 @@ fit_dat <- tox_dat_tidy %>%
     mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
     ungroup() %>%
     group_by(Species, Conc, group) %>%
-    summarise()    
+    summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat)
+ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
 ssd_pred <- predict(ssd_fits, ci = TRUE)
 
@@ -82,12 +177,20 @@ ssd_plot(fit_dat, ssd_pred,
   xlab = "Concentration (µg/L)",
   ribbon = TRUE,
   label_size = 4,
+  hc = NULL
 ) +
   expand_limits(x = 3000) +
-  scale_color_viridis_d() +
+  scale_color_manual(values = unname(zissou1_extended)) +
   labs(color = "Taxonomic Group") +
   theme(text = element_text(size = 16), legend.position = "top")
 ```
+
+### California Residents
+
+The `ca_resident == "Yes"` filter is more restrictive than `ca_relevant`,
+retaining only species with established populations in California. Removing
+non-native lab strains typically reduces the species count and may shift the
+distribution if those strains were among the more or less sensitive entries.
 
 ```{r}
 #cali residents
@@ -99,9 +202,9 @@ fit_dat <- tox_dat_tidy %>%
     mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
     ungroup() %>%
     group_by(Species, Conc, group) %>%
-    summarise()    
+    summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat)
+ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
 ssd_pred <- predict(ssd_fits, ci = TRUE)
 
@@ -111,12 +214,20 @@ ssd_plot(fit_dat, ssd_pred,
   xlab = "Concentration (µg/L)",
   ribbon = TRUE,
   label_size = 4,
+  hc = NULL
 ) +
   expand_limits(x = 3000) +
-  scale_color_viridis_d() +
   labs(title = "California Residents", color = "Taxonomic Group") +
   theme(text = element_text(size = 16))
 ```
+
+### California Native Genus
+
+The `ca_native_genus == "Yes"` filter includes species whose **genus** is
+native to California, even if the specific test strain or congener tested is
+not strictly native. This is a pragmatic expansion of the native-only scope
+that recovers test data from closely related taxa when direct native-species
+data are scarce.
 
 ```{r}
 #cali native genus
@@ -128,9 +239,9 @@ fit_dat <- tox_dat_tidy %>%
     mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
     ungroup() %>%
     group_by(Species, Conc, group) %>%
-    summarise()    
+    summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat)
+ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
 ssd_pred <- predict(ssd_fits, ci = TRUE)
 
@@ -140,12 +251,22 @@ ssd_plot(fit_dat, ssd_pred,
   xlab = "Concentration (µg/L)",
   ribbon = TRUE,
   label_size = 4,
+  hc = NULL
 ) +
   expand_limits(x = 3000) +
   scale_color_viridis_d() +
   labs(title = "California Native Genus", color = "Taxonomic Group") +
   theme(text = element_text(size = 16))
 ```
+
+### California Native — Insufficient Data
+
+The strictest scope (`ca_native == "Yes"`, only species themselves native to
+California) results in too few data points for `ssd_fit_dists()` to fit a
+reliable log-normal distribution. `ssdtools` generally requires a minimum of
+six to eight species for a meaningful SSD; the native-only filter falls below
+this threshold. The code is retained here for documentation, but its output
+should not be interpreted as a valid SSD.
 
 ```{r}
 #cali_native - FAILS
@@ -157,9 +278,9 @@ fit_dat <- tox_dat_tidy %>%
     mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
     ungroup() %>%
     group_by(Species, Conc, group) %>%
-    summarise()    
+    summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat)
+ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
 ssd_pred <- predict(ssd_fits, ci = TRUE)
 
@@ -169,6 +290,7 @@ ssd_plot(fit_dat, ssd_pred,
   xlab = "Concentration (µg/L)",
   ribbon = TRUE,
   label_size = 4,
+  hc = NULL
 ) +
   expand_limits(x = 3000) +
   scale_color_viridis_d() +
@@ -176,53 +298,34 @@ ssd_plot(fit_dat, ssd_pred,
   theme(text = element_text(size = 16))
 ```
 
-# Acute Chronic Ratios
+## Limitations
 
-```{r}
-geo_mean <- function(x) exp(mean(log(x[x > 0]), na.rm = TRUE))
-```
+- **LOEC/2 substitution introduces directional uncertainty.** Using half the
+  LOEC as a NOEC surrogate assumes the true NOEC lies halfway between zero
+  effect and the first observed effect concentration — a reasonable default
+  but one that understates sensitivity for species where the true NOEC is
+  close to zero, and overstates it where the dose-response is very steep.
+- **Fixed ACR of 10 may not reflect species-specific ratios.** The
+  acute-to-chronic conversion factor varies widely across taxa and compounds.
+  Using a fixed value of 10 introduces uncertainty into the chronic-equivalent
+  concentrations derived from acute tests.
+- **Log-normal is assumed, not tested.** A single distribution family
+  (`lnorm`) is fitted here. Comparing fit across multiple candidate
+  distributions (log-logistic, gamma, Weibull) and selecting based on AIC or
+  goodness-of-fit is standard SSD practice but is not performed in this
+  document.
+- **Per-species medians suppress within-species variability.** Collapsing
+  multiple tests per species to a single median discards information about
+  life-stage and laboratory variation. A species represented by many tests
+  under very different conditions may have a median that does not accurately
+  represent any one condition.
+- **HC5 confidence intervals widen substantially at small N.** The California
+  native genus and residents variants include relatively few species, so the
+  confidence ribbon around the fitted curve is correspondingly wide. The HC5
+  point estimate should be interpreted with caution in those variants.
+- **Invasive species are retained in the fit.** Asterisked species are visually
+  flagged but not excluded. A regulatory SSD intended to protect native
+  communities would typically exclude invasives from the fit, not merely label
+  them.
 
-```{r}
-
-#Do we have acute and chronic data for each species?
-species_sum <- tox_dat %>%
-  group_by(Species, group) %>%
-  summarise(
-    acute   = if_else(any(chronic_acute == "acute"),   "Yes", "No"),
-    chronic = if_else(any(chronic_acute == "chronic"), "Yes", "No"),
-    .groups = "drop"
-  ) %>%
-  arrange(group, Species)
-
-both_rows <- which(species_sum$acute == "Yes" & species_sum$chronic == "Yes")
-
-species_sum %>%
-  knitr::kable(col.names = c("Species", "Group", "Acute", "Chronic")) %>%
-  kableExtra::kable_styling() %>%
-  kableExtra::row_spec(both_rows, background = "#90EE90")
-
-#Calculate the acute-chronic ratio for species where acute and chronic data are available
-both_species <- species_sum$Species[both_rows]
-
-acr_table <- tox_dat %>%
-  filter(Species %in% both_species) %>%
-  #just use noecs without applying assessment factors 
-  filter(
-    !(note == "NOEC from EC50"),
-    !is.na(noec_ug_l)
-  ) %>%
-  #calculate the median chronic and acute NOECs
-  group_by(Species, chronic_acute) %>%
-  mutate(median_noec = median(noec_ug_l)) %>%
-  ungroup() %>%
-  group_by(Species, group, chronic_acute, median_noec) %>%
-  summarise(.groups = "drop") %>%
-  pivot_wider(names_from = chronic_acute, values_from = median_noec) %>%
-  mutate(acr = acute/chronic)
-
-#take the geometric mean of all of the acute chronic ratios to get the Final Acute Chronic Ratio
-FACR <- geo_mean(acr_table$acr)
-
-
-
-```
+End of Analysis.
