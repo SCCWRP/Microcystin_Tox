@@ -14,6 +14,8 @@ format:
 execute:
   echo: true
   warning: false
+  fig-width: 10
+  fig-height: 7
 ---
 
 ## Overview
@@ -65,18 +67,19 @@ library(ssdtools)
 library(ggplot2)
 
 zissou1_extended <- c(
-  navy   = "#1c1c84",
-  teal   = "#3B9AB2",
-  blue   = "#78B7C5",
-  yellow = "#EBCC2A",
-  gold   = "#E1AF00",
-  red    = "#F21A00",
-  maroon = "#e86e0b")
+  "Salmonid"                     = "#1c1c84",
+  "Second Fish Family"           = "#3B9AB2",
+  "Chordata"                     = "#78B7C5",
+  "Planktonic Crustacean"        = "#EBCC2A",
+  "Benthic Crustacean"           = "#E1AF00",
+  "Insect"                       = "#e86e0b",
+  "Other Phylum"                 = "#F21A00",
+  "Rotifera, Annelida, Mollusca" = "#701705")
 
 ```
 
-The `zissou1_extended` palette provides seven visually distinct colors for
-differentiating taxonomic groups across plot panels.
+The `zissou1_extended` palette maps one color to each of the eight taxonomic
+groups, keyed by group name so each group gets the same color across all plots.
 
 ## Data Import and Preparation
 
@@ -142,9 +145,10 @@ ssd_plot(fit_dat, ssd_pred,
   hc = NULL
 ) +
   expand_limits(x = 3000) +
-  scale_color_viridis_d() +
+  scale_color_manual(values = zissou1_extended) +
   labs(title = "All Species", color = "Taxonomic Group") +
-  theme(text = element_text(size = 16))
+  theme(text = element_text(size = 16), legend.position = "top",
+        plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
 ```
 
 ### California Relevant Species
@@ -180,9 +184,10 @@ ssd_plot(fit_dat, ssd_pred,
   hc = NULL
 ) +
   expand_limits(x = 3000) +
-  scale_color_manual(values = unname(zissou1_extended)) +
+  scale_color_manual(values = zissou1_extended) +
   labs(color = "Taxonomic Group") +
-  theme(text = element_text(size = 16), legend.position = "top")
+  theme(text = element_text(size = 16), legend.position = "top",
+        plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
 ```
 
 ### California Residents
@@ -217,8 +222,10 @@ ssd_plot(fit_dat, ssd_pred,
   hc = NULL
 ) +
   expand_limits(x = 3000) +
+  scale_color_manual(values = zissou1_extended) +
   labs(title = "California Residents", color = "Taxonomic Group") +
-  theme(text = element_text(size = 16))
+  theme(text = element_text(size = 16), legend.position = "top",
+        plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
 ```
 
 ### California Native Genus
@@ -254,9 +261,10 @@ ssd_plot(fit_dat, ssd_pred,
   hc = NULL
 ) +
   expand_limits(x = 3000) +
-  scale_color_viridis_d() +
+  scale_color_manual(values = zissou1_extended) +
   labs(title = "California Native Genus", color = "Taxonomic Group") +
-  theme(text = element_text(size = 16))
+  theme(text = element_text(size = 16), legend.position = "top",
+        plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
 ```
 
 ### California Native — Insufficient Data
@@ -268,34 +276,37 @@ six to eight species for a meaningful SSD; the native-only filter falls below
 this threshold. The code is retained here for documentation, but its output
 should not be interpreted as a valid SSD.
 
-```{r}
-#cali_native - FAILS
+```{r, include = FALSE}
+#cali_native - insufficient data (nrow < 6), retained for documentation only
 fit_dat <- tox_dat_tidy %>%
     filter(
       ca_native == "Yes",
       !is.na(noec_ssd)) %>%
     group_by(Species) %>%
-    mutate(Conc = median(noec_ssd)) %>% #collapse NOEC by species
+    mutate(Conc = median(noec_ssd)) %>%
     ungroup() %>%
     group_by(Species, Conc, group) %>%
     summarise()
 
-ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
+if (nrow(fit_dat) >= 6) {
+  ssd_fits <- ssd_fit_dists(fit_dat, dists = "lnorm")
 
-ssd_pred <- predict(ssd_fits, ci = TRUE)
+  ssd_pred <- predict(ssd_fits, ci = TRUE)
 
-ssd_plot(fit_dat, ssd_pred,
-  label = "Species",
-  color = "group",
-  xlab = "Concentration (µg/L)",
-  ribbon = TRUE,
-  label_size = 4,
-  hc = NULL
-) +
-  expand_limits(x = 3000) +
-  scale_color_viridis_d() +
-  labs(title = "California Native", color = "Taxonomic Group") +
-  theme(text = element_text(size = 16))
+  ssd_plot(fit_dat, ssd_pred,
+    label = "Species",
+    color = "group",
+    xlab = "Concentration (µg/L)",
+    ribbon = TRUE,
+    label_size = 4,
+    hc = NULL
+  ) +
+    expand_limits(x = 3000) +
+    scale_color_manual(values = zissou1_extended) +
+    labs(title = "California Native", color = "Taxonomic Group") +
+    theme(text = element_text(size = 16), legend.position = "top",
+          plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
+}
 ```
 
 ## Limitations

@@ -43,6 +43,15 @@ order:
    sublethal ones. The chronic side is unaffected and still uses all four
    endpoints (Growth, Development, Reproduction, Mortality) from Step 1.
 
+Additionally, a fifth deviation applies to the **acute side only**:
+
+5. **NOEC/LOEC surrogates used instead of LC50/EC50 (Step 5 variant):**
+   EPA guidance calls for LC50 or EC50 (or other ECx/LCx) values as the
+   basis for each species' Acute Value. This dataset did not consistently
+   report LC50/EC50s, so $\sqrt{\text{NOEC}\times\text{LOEC}}$ is used as a
+   surrogate — an additional departure from strict EPA practice described in
+   the variant note within Step 5.
+
 ::: {.callout-important}
 ## Headline conclusion: this dataset does not support an EPA-guideline-compliant CCC
 
@@ -71,10 +80,12 @@ three versions, driven entirely by which endpoints were allowed in. That
 sensitivity is itself a symptom of too little independent data to average
 out any one study's influence.
 
-Additionally, the exact Final Acute Value formula was reconstructed from
-established technical literature/prior knowledge rather than freshly
-re-verified against a primary source in this session — see the note below
-Step 5.
+Additionally, the acute side uses $\sqrt{\text{NOEC}\times\text{LOEC}}$ as
+a surrogate Acute Value in place of the LC50/EC50 that EPA guidance
+recommends — a further deviation described in the variant note within Step 5.
+The exact Final Acute Value formula was also reconstructed from established
+technical literature/prior knowledge rather than freshly re-verified against
+a primary source in this session — see the note below Step 6.
 :::
 
 ## Setup
@@ -350,6 +361,28 @@ categories are represented on the acute side too — also short of the
 a benthic crustacean). **This means the FAV/FACR fallback does not actually
 rescue this derivation** from EPA's data-sufficiency requirement — it is
 undermined by the same kind of taxonomic gap as the direct chronic method.
+
+### Variant: NOEC/LOEC-based Acute Values instead of LC50/EC50
+
+EPA's guidelines specify that each species' Acute Value should be derived
+from an LC50 or EC50 (or another ECx/LCx) — the concentration predicted to
+affect exactly *x*% of organisms. This dataset did not consistently report
+LC50/EC50 values for the acute mortality tests; instead, only NOEC and LOEC
+were available. Accordingly, the Acute Value here is computed as
+$\sqrt{\text{NOEC}\times\text{LOEC}}$ — the same geometric-mean surrogate
+used for Chronic Values — rather than from a true concentration-response
+LC/EC estimate.
+
+This is a departure from standard EPA practice on top of the other
+deviations already noted. The directional bias is uncertain: the geometric
+mean of NOEC and LOEC will fall somewhere between the two bounds, and
+whether it over- or under-estimates the true LC50 depends on the shape of
+the species' concentration-response curve and how the original investigators
+chose their test concentrations. Mixing this surrogate approach into the
+FAV calculation compounds the existing concerns about data sufficiency. This
+section is flagged as a variant — not correctable within the available
+dataset — rather than a sensitivity check, because no alternative acute
+endpoint metric is available to substitute.
 
 ## Step 6 — Final Acute Value (FAV)
 
